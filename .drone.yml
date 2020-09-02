@@ -8,4 +8,4 @@ steps:
     commands:
       - python -V
       - python3 -m pip install flake8
-      - python3 -m flake8 src/practise-python/*.py
+      - python3 -m flake8 src/python-movie-collection-checker/*.py
