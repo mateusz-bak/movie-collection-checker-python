@@ -1,0 +1,11 @@
+kind: pipeline
+name: python-tests
+type: docker
+
+steps:
+  - name: static-analysis
+    image: python
+    commands:
+      - python -V
+      - python3 -m pip install flake8
+      - python3 -m flake8 src/practise-python/*.py
