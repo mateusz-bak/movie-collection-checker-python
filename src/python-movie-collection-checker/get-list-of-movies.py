@@ -14,12 +14,29 @@ def get_list_of_movies_from_radarr(instance, api_key):
     api_address = instance + "api/movie"
     response = requests.get(api_address, headers=headers)
     data = response.json()
-    return data
+
+    list_of_ids = []
+
+    for x in range(0, len(data)):
+        buffer = data[x]["tmdbId"]
+        # print(buffer)
+        list_of_ids.append(buffer)
+
+    return list_of_ids
 
 
 def get_movie_details_from_tmdb(movie_id, api_key):
     api_address = "https://api.themoviedb.org/3/movie/"
     api_call = api_address + movie_id + "?api_key=" + api_key
+    response = requests.get(api_call)
+    data = response.json()
+    return data
+
+
+def get_collection_details_from_tmdb(collection_id, api_key):
+    api_address = "https://api.themoviedb.org/3/collection/"
+    api_call = api_address + collection_id + "?api_key=" + api_key
+    # print(api_call)
     response = requests.get(api_call)
     data = response.json()
     return data
@@ -37,15 +54,26 @@ def read_from_json(filename):
     return data
 
 
-def check_if_part_of_a_collection(movie_id, tmdb_api_key):
+def check_name_of_collection(movie_id, tmdb_api_key):
     movie_details = get_movie_details_from_tmdb(movie_id, tmdb_api_key)
     if movie_details['belongs_to_collection'] is None:
         return 0
     else:
-        collection = movie_details['belongs_to_collection']['name']
+        collection_name = movie_details['belongs_to_collection']['name']
         # title = movie_details['original_title']
         # detail = title + " belongs to collection: " + collection
-        return collection
+        return collection_name
+
+
+def check_id_of_collection(movie_id, tmdb_api_key):
+    movie_details = get_movie_details_from_tmdb(movie_id, tmdb_api_key)
+    if movie_details['belongs_to_collection'] is None:
+        return 0
+    else:
+        collection_id = movie_details['belongs_to_collection']['id']
+        # title = movie_details['original_title']
+        # detail = title + " belongs to collection: " + collection
+        return collection_id
 
 
 def make_a_list_of_owned_collections(data, tmdb_api_key):
@@ -55,33 +83,61 @@ def make_a_list_of_owned_collections(data, tmdb_api_key):
     number_of_movies = len(list_of_movies_ids)
 
     for x in list_of_movies_ids:
-        print(x)
+        # print(x)
 
         # wrong ID for a in TMDB movie - needs to be adjusted here
         if x == 690882:
-            collection_title = check_if_part_of_a_collection("664847",
+            collection_id = check_id_of_collection("664847",
                                                              tmdb_api_key)
         else:
-            collection_title = check_if_part_of_a_collection(str(x),
+            collection_id = check_id_of_collection(str(x),
                                                              tmdb_api_key)
         counter += 1
         # print(str(counter))
-        if collection_title == 0:
+        if collection_id == 0:
             pass
         else:
-            if collection_title not in list_of_collections:
-                list_of_collections.append(collection_title)
+            if collection_id not in list_of_collections:
+                list_of_collections.append(collection_id)
                 cls()
-                # print(list_of_collections)
-                print(str(counter) + "/" + str(number_of_movies))
-                print(str(len(list_of_collections)) + " collections")
+                print("Movies: " +str(counter) + "/" + str(number_of_movies))
+                print("Found " + str(len(list_of_collections)) + " collections")
     return list_of_collections
 
 
+def get_movies_id_in_a_collection(collection, api_key):
+    collection_details = get_collection_details_from_tmdb(collection, api_key)
+    collection_details_parts = collection_details["parts"]
+    movies_ids_in_collection = []
+
+    for x in range(0, len(collection_details_parts)):
+        collection_details_parts_titles = collection_details_parts[x]["id"]
+        # print(collection_details_parts_titles)
+        movies_ids_in_collection.append(collection_details_parts_titles)
+    return movies_ids_in_collection
+
+
+def check_if_movie_exists_in_library(movies, movies_in_collection, api_key):
+    for x in movies_in_collection:
+        if x in movies:
+            pass
+            # print(str(x) + " found")
+        else:
+            # print(str(x) + " not found")
+            movie_details = get_movie_details_from_tmdb(str(x), api_key)
+            print(movie_details["title"])
+
+
+
 if __name__ == '__main__':
-    data = get_list_of_movies_from_radarr(config.radarr_instance,
+    movies = get_list_of_movies_from_radarr(config.radarr_instance,
                                           config.radarr_api_key)
 
-    # collections are stored in collections var as a list of strings
-    collections = make_a_list_of_owned_collections(data, config.tmdb_api_key)
-    print(collections)
+    # print(len(data))
+    # collections = make_a_list_of_owned_collections(data, config.tmdb_api_key)
+    # print(collections)
+
+    collection = "9485"
+    movies_in_collection = get_movies_id_in_a_collection(collection, config.tmdb_api_key)
+
+    check_if_movie_exists_in_library(movies, movies_in_collection, config.tmdb_api_key)
