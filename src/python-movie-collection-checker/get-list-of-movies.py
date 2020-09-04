@@ -134,33 +134,51 @@ def check_if_movie_exists_in_library(movies, movies_in_collection, api_key):
             movie_details = get_movie_details_from_tmdb(str(x), api_key)
 
             release_date = movie_details["release_date"]
+            # print("-----")
+            movie_title = movie_details["title"]
+            # print(movie_title)
+            # print(release_date)
             # print(release_date)
             release_date = release_date.split("-")
-            print(release_date)
-            d1 = datetime.datetime(int(release_date[0]), int(release_date[1]),
-                                   int(release_date[2])).date()
-            d1_year = d1.year
-            # print(d1)
-            # print(d1_year)
-            d2 = datetime.datetime.now().date()
-            # print(d2)
+            # print(release_date)
 
-            if d1 < d2:
-                # print(str(d1) + " > " + str(d2))
-                movie_title = movie_details["title"]
-                result = movie_title + " (" + str(d1_year) + ")"
-                print(result)
-                store_results_in_txt(result)
+            if release_date == [""]:
+                # print("Release date is empty for this movie")
+                result = movie_title + " ( )"
+                # print(result)
+                # store_results_in_txt(result,
+                #                      'missing-movies-no-release-date.txt')
+                pass
+            else:
+                d1 = datetime.datetime(int(release_date[0]),
+                                       int(release_date[1]),
+                                       int(release_date[2])).date()
+                d1_year = d1.year
+                # print(d1)
+                # print(d1_year)
+                d2 = datetime.datetime.now().date()
+                # print(d2)
+                if d1 < d2:
+                    # print("Movie is released.")
+                    # print(str(d1) + " > " + str(d2))
+                    # movie_title = movie_details["title"]
+                    result = movie_title + " (" + str(d1_year) + ")"
+                    print(result)
+                    # store_results_in_txt(result, 'missing-movies.txt')
+                else:
+                    # print("Movie is not released.")
+                    pass
 
 
-def store_results_in_txt(result):
-    f = open("missing-movies.txt", "a")
+def store_results_in_txt(result, filename):
+    f = open(filename, "a")
     f.write(result + "\n")
     f.close()
 
 
 if __name__ == '__main__':
     open('missing-movies.txt', 'w').close()
+    # open('missing-movies-no-release-date.txt', 'w').close()
     movies = get_list_of_movies_from_radarr(config.radarr_instance,
                                             config.radarr_api_key)
 
