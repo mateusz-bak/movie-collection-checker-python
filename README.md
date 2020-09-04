@@ -8,4 +8,15 @@ A python script that will check existing movies and will tell you if you are mis
 
 ## Usage
 
-TBD
+```python
+python3 src/python-movie-collection-checker/get-list-of-movies.py
+```
+
+# Configuration:
+You need to edit file config.py accordingly.
+
+
+# Info
+Script will produce file missing-movies.txt with the output.
+
+Script will skip movies that are not released yet or don't have release date in TMDB.
