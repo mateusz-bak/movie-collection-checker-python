@@ -15,4 +15,5 @@ steps:
     commands:
       - apt-get update
       - apt-get install docker.io -y
+      - systemctl start docker
       - docker build -t "python-movie-collection-checker:0.0.1" .
