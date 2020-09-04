@@ -13,5 +13,6 @@ steps:
   - name: build-image
     image: ubuntu
     commands:
+      - apt-get update
       - apt-get install docker.io -y
       - docker build -t "python-movie-collection-checker:0.0.1" .
