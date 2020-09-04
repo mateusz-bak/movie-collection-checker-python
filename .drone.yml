@@ -9,3 +9,9 @@ steps:
       - python -V
       - python3 -m pip install flake8
       - python3 -m flake8 src/python-movie-collection-checker/*.py
+
+  - name: build-image
+    image: alpine
+    commands:
+      - apt-get install docker.io -y
+      - docker build -t "python-movie-collection-checker:0.0.1" .
