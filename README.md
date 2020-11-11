@@ -6,14 +6,18 @@
 
 A python script that will check existing movies and will tell you if you are missing any movies from collections you already have.
 
+![Screenshot](images/screenshot.png)
+
+
 ## Usage
+Clone repo, build the image and run the container.
 
 ```
 git clone https://gitea.mateusz.ovh/mateusz/python-movie-collection-checker.git
 
 cd python-movie-collection-checker/
 
-sudo docker build -t "python-movie-collection-checker:0.0.1" .
+sudo docker build -t "python-movie-collection-checker:0.0.2" .
 
 docker run \
 -e RADARR_PROTOCOL='http' \
@@ -22,9 +26,15 @@ docker run \
 -e radarr_api_key=<api_key> \
 -e tmdb_api_key=<api_key> \
 -v ${PWD}/output:/home/output \
---name python-movie-collection-checker  python-movie-collection-checker:0.0.1
+--name python-movie-collection-checker  python-movie-collection-checker:0.0.2
 
 ```
+
+First script will import movies from Radarr, after that it will check what collections your library has.
+
+Next it will iterate after all the collections and check if the movies are present in your library or not. If not the movie title and release year will be written to output/missing-movies.txt.
+
+Wait for script to finish (10 - 15 min depending on the size of your collection).
 
 
 # Info
