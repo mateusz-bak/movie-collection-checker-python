@@ -30,15 +30,15 @@ docker run \
 
 ```
 
-First script will import movies from Radarr, after that it will check what collections your library has.
-
-Next it will iterate after all the collections and check if the movies are present in your library or not. If not the movie title and release year will be written to output/missing-movies.txt.
-
-Wait for script to finish (10 - 15 min depending on the size of your collection).
-
 
 # Info
-Script will produce file missing-movies.txt with the output.
+First script will import movies from Radarr, after that it will check what collections your library has.
+
+Next it will iterate after all the collections and check if the movies are present in your library or not.
+
+If the movie is not found, it's title and release year will be written to output/missing-movies.txt.
+
+Wait for script to finish (10 - 15 min depending on the size of your collection).
 
 Script will skip movies that are not released yet or don't have release date in TMDB.
 
